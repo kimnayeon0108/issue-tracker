@@ -22,8 +22,15 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
         shell: bash
+        working-directory: ./BE/issue_tracker/
       
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew bootjar -x test
         shell: bash
+        working-directory: ./BE/issue_tracker/
+        
+      - name: Make zip file
+        run: zip -qq -r ./$GITHUB_SHA.zip .
+        shell: bash   
+        working-directory: ./BE/issue_tracker/
         

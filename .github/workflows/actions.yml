@@ -27,4 +27,5 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
         shell: bash
+        working-directory: ./BE/issue_tracker/
         

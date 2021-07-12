@@ -25,7 +25,7 @@ jobs:
         working-directory: ./BE/issue_tracker/
       
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew bootjar -x test
         shell: bash
         working-directory: ./BE/issue_tracker/
         

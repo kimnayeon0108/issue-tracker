@@ -29,3 +29,8 @@ jobs:
         shell: bash
         working-directory: ./BE/issue_tracker/
         
+      - name: Make zip file
+        run: zip -qq -r ./$GITHUB_SHA.zip .
+        shell: bash   
+        working-directory: ./BE/issue_tracker/
+        

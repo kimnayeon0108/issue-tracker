@@ -1,0 +1,53 @@
+name: Spring boot app deploy
+
+
+on:
+  push:
+    branches: [ dev/BE ]
+  pull_request:
+    branches: [ dev/BE ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x BE/gradlew
+        
+      - name: Setup MySQL
+        uses: samin/mysql-action@v1
+        with:
+          character set server: 'utf8'
+          mysql database: 'baseball'
+          mysql user: 'root'
+          mysql password: ${{ secrets.MYSQL_PASSWORD }}
+        
+      - name: Build with Gradle
+        run: ./gradlew build
+        working-directory: ./BE
+        
+      - name: Make zip file
+        run: zip -qq -r ./$GITHUB_SHA.zip .
+        working-directory: ./BE
+        
+      - name: aws credential
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_IAM_YEON_DEVELOPER_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_IAM_YEON_DEVELOPER_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+      
+      - name: upload S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://my-bucket-practice00
+        working-directory: ./BE
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name springboot-baseball --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name springboot-baseball-group --s3-location bucket=my-bucket-practice00,bundleType=zip,key=$GITHUB_SHA.zip 

@@ -22,23 +22,15 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-        working-directory: ./BE
-        
-      - name: Setup MySQL
-        uses: samin/mysql-action@v1
-        with:
-          character set server: 'utf8'
-          mysql database: 'baseball'
-          mysql user: 'root'
-          mysql password: ${{ secrets.MYSQL_PASSWORD }}
+        working-directory: ./BE/issue-tracker
         
       - name: Build with Gradle
         run: ./gradlew build
-        working-directory: ./BE
+        working-directory: ./BE/issue-tracker
         
       - name: Make zip file
         run: zip -qq -r ./$GITHUB_SHA.zip .
-        working-directory: ./BE
+        working-directory: ./BE/issue-tracker
         
       - name: aws credential
         uses: aws-actions/configure-aws-credentials@v1
@@ -49,6 +41,7 @@ jobs:
       
       - name: upload S3
         run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://my-bucket-practice00
-        working-directory: ./BE
+        working-directory: ./BE/issue-tracker
+        
       - name: Code Deploy
         run: aws deploy create-deployment --application-name springboot-baseball --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name springboot-baseball-group --s3-location bucket=my-bucket-practice00,bundleType=zip,key=$GITHUB_SHA.zip 

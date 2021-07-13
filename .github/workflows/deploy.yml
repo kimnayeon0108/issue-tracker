@@ -21,33 +21,27 @@ jobs:
           java-version: 11
 
       - name: Grant execute permission for gradlew
-        run: chmod +x BE/gradlew
-        
-      - name: Setup MySQL
-        uses: samin/mysql-action@v1
-        with:
-          character set server: 'utf8'
-          mysql database: 'baseball'
-          mysql user: 'root'
-          mysql password: ${{ secrets.MYSQL_PASSWORD }}
+        run: chmod +x gradlew
+        working-directory: ./BE/issue_tracker
         
       - name: Build with Gradle
         run: ./gradlew build
-        working-directory: ./BE
+        working-directory: ./BE/issue_tracker
         
       - name: Make zip file
         run: zip -qq -r ./$GITHUB_SHA.zip .
-        working-directory: ./BE
+        working-directory: ./BE/issue_tracker
         
       - name: aws credential
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_IAM_YEON_DEVELOPER_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_IAM_YEON_DEVELOPER_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
       
       - name: upload S3
         run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://my-bucket-practice00
-        working-directory: ./BE
+        working-directory: ./BE/issue_tracker
+        
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name springboot-baseball --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name springboot-baseball-group --s3-location bucket=my-bucket-practice00,bundleType=zip,key=$GITHUB_SHA.zip 
+        run: aws deploy create-deployment --application-name issue-tracker --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name issue-tracke-group --s3-location bucket=my-bucket-practice00,bundleType=zip,key=$GITHUB_SHA.zip 

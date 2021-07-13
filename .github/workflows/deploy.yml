@@ -21,15 +21,16 @@ jobs:
           java-version: 11
 
       - name: Grant execute permission for gradlew
-        run: chmod +x ./BE/issue-tracker/gradlew
+        run: chmod +x 
+        working-directory: ./BE/issue_tracker
         
       - name: Build with Gradle
         run: ./gradlew build
-        working-directory: ./BE/issue-tracker
+        working-directory: ./BE/issue_tracker
         
       - name: Make zip file
         run: zip -qq -r ./$GITHUB_SHA.zip .
-        working-directory: ./BE/issue-tracker
+        working-directory: ./BE/issue_tracker
         
       - name: aws credential
         uses: aws-actions/configure-aws-credentials@v1
@@ -40,7 +41,7 @@ jobs:
       
       - name: upload S3
         run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://my-bucket-practice00
-        working-directory: ./BE/issue-tracker
+        working-directory: ./BE/issue_tracker
         
       - name: Code Deploy
         run: aws deploy create-deployment --application-name springboot-baseball --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name springboot-baseball-group --s3-location bucket=my-bucket-practice00,bundleType=zip,key=$GITHUB_SHA.zip 

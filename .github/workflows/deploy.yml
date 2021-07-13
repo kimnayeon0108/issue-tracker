@@ -44,4 +44,4 @@ jobs:
         working-directory: ./BE/issue_tracker
         
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name issue-tracker --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name issue-tracke-group --s3-location bucket=my-bucket-practice00,bundleType=zip,key=$GITHUB_SHA.zip 
+        run: aws deploy create-deployment --application-name issue-tracker --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name issue-tracker-group --s3-location bucket=my-bucket-practice00,bundleType=zip,key=$GITHUB_SHA.zip 

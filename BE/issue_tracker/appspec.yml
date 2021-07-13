@@ -4,3 +4,7 @@ files:
   - source: /
     destination: /home/ubuntu/issue-tracker/build/
 
+hooks:
+  AfterInstall:
+    - location: execute-deploy.sh
+      timeout: 180

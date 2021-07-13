@@ -19,6 +19,11 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+          
+      - name: Set property
+        run: echo ${{ secrets.JASYPT_PASSWORD }} >> application.properties
+        shell: bash
+        working-directory: ./BE/src/main/resources
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
